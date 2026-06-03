@@ -189,6 +189,83 @@ npm run build
    - `PORT` is set by Azure or defaults to `5000`
    - Cosmos DB connection string is valid
    - Blob Storage settings are configured correctly
+   - If GitHub Actions deploy fails with `Ip Forbidden (CODE: 403)`, review App Service Networking and SCM access restrictions
+
+## Private App Service Architecture
+
+- Keep the Azure App Service private by using a Private Endpoint.
+- Put Azure Application Gateway in front of the app for inbound access.
+- Route Application Gateway traffic to the App Service private endpoint.
+- Disable or tightly restrict public access on the App Service.
+- Use private DNS so the App Service hostname resolves to the private endpoint from inside the virtual network.
+
+## Private App Service Deployment Model
+
+- If the App Service uses a Private Endpoint and private networking, GitHub-hosted runners usually can't deploy to the SCM/Kudu endpoint.
+- For this architecture, use a self-hosted GitHub Actions runner inside the Azure virtual network, or another deployment agent that has network access to the private App Service SCM endpoint.
+- If you keep SCM access restrictions enabled, the deployment runner must be allowed to reach the SCM site.
+- Application Gateway is for inbound application traffic. It does not solve CI/CD access to the deployment endpoint.
+
+## Private App Service Deployment Steps
+
+1. Create a virtual network with subnets for:
+   - Application Gateway
+   - App Service Private Endpoint
+   - self-hosted deployment runner if you use GitHub Actions
+
+2. Create the Azure App Service and add a Private Endpoint.
+
+3. Configure private DNS for the App Service private endpoint so internal clients and deployment agents can resolve the app correctly.
+
+4. Create Azure Application Gateway and configure the backend to target the App Service private endpoint.
+
+5. Decide how deployments will run:
+   - Preferred: self-hosted GitHub Actions runner in the same virtual network or a peered network
+   - Alternative: another private deployment agent with line-of-sight to the SCM endpoint
+
+6. If using GitHub Actions, do not rely on GitHub-hosted runners for private App Service deployment.
+
+7. Configure App Service settings:
+
+```env
+NODE_ENV=production
+COSMOS_DB_URI=<your-cosmos-mongo-connection-string>
+JWT_SECRET=<your-secure-secret>
+AZURE_STORAGE_CONNECTION_STRING=<your-storage-connection-string>
+AZURE_CONTAINER_NAME=insurance-documents
+CLIENT_URL=https://<your-application-gateway-hostname>
+```
+
+8. Set the startup command:
+
+```bash
+npm start
+```
+
+9. Build the frontend before deployment:
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+10. Deploy from a network-reachable agent, then validate:
+   - the app responds through Application Gateway
+   - `/api/health` works through the intended private route
+   - the SCM/deployment endpoint is reachable only from trusted private infrastructure
+
+## Azure Deployment Troubleshooting
+
+- `Ip Forbidden (CODE: 403)` during `azure/webapps-deploy` usually means the App Service SCM/Kudu endpoint is blocked by Networking rules, Access Restrictions, Private Endpoint configuration, or disabled public access.
+- In Azure Portal, open App Service, then check `Networking`:
+  - Ensure `Public network access` is enabled if you are deploying directly from GitHub-hosted runners.
+  - Review `Access Restrictions` for both the main site and the SCM site.
+  - If `SCM site uses main site restrictions` is enabled, make sure those rules also allow deployment traffic.
+- If you are using a Private Endpoint or strict IP allowlist, GitHub-hosted runners will often be blocked because their outbound IPs are not fixed for simple allowlisting.
+- A quick test is to temporarily remove SCM restrictions, redeploy, then re-apply a secure rule set after confirming deployment works.
+- If you must keep the app private, use a self-hosted GitHub runner inside the same Azure virtual network or deploy from Azure DevOps/agent infrastructure that has allowed network access.
+- The deprecation warnings from the GitHub Action are not the reason for the deployment failure. The blocking issue is the `403`.
 
 ## Cosmos DB Setup
 
