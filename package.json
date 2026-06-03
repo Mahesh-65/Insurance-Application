@@ -1,0 +1,16 @@
+{
+  "name": "insurance-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "nodemon backend/src/server.js",
+    "start": "npm --workspace backend run start",
+    "test": "npm --workspace backend run test",
+    "frontend-build": "npm --workspace frontend run build",
+    "build": "npm run frontend-build"
+  }
+}

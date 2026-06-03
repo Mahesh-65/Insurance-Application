@@ -1,0 +1,8 @@
+name: insurance-management-system
+metadata:
+  template: insurance-management-system@1.0.0
+services:
+  app:
+    project: .
+    language: js
+    host: appservice

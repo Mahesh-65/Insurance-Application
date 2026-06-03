@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --bg: #050505;
+  --bg-accent: rgba(255, 255, 255, 0.12);
+  --bg-secondary: #161616;
+  --panel: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #ffffff;
+  --muted: #b7b7b7;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --button-secondary-bg: transparent;
+  --button-secondary-text: #ffffff;
+  --button-secondary-border: rgba(255, 255, 255, 0.2);
+  --header-bg: rgba(0, 0, 0, 0.4);
+}
+
+html:not(.dark) {
+  color-scheme: light;
+  --bg: #f5f5f5;
+  --bg-accent: rgba(0, 0, 0, 0.08);
+  --bg-secondary: #dcdcdc;
+  --panel: rgba(255, 255, 255, 0.82);
+  --border: rgba(0, 0, 0, 0.12);
+  --text: #111111;
+  --muted: #555555;
+  --shadow: rgba(15, 15, 15, 0.12);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --input-border: rgba(0, 0, 0, 0.12);
+  --button-secondary-bg: rgba(255, 255, 255, 0.7);
+  --button-secondary-text: #111111;
+  --button-secondary-border: rgba(0, 0, 0, 0.15);
+  --header-bg: rgba(255, 255, 255, 0.72);
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, var(--bg-accent), transparent 30%),
+    linear-gradient(135deg, var(--bg), var(--bg-secondary) 50%, var(--bg));
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.glass {
+  background: var(--panel);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px var(--shadow);
+}
+
+.input {
+  @apply w-full rounded-2xl px-4 py-3 outline-none transition;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+.input::placeholder {
+  color: var(--muted);
+}
+
+.input:focus {
+  border-color: var(--text);
+}
+
+.btn-primary {
+  @apply rounded-full bg-white px-6 py-3 font-semibold text-black transition hover:scale-[1.02];
+}
+
+.btn-secondary {
+  @apply rounded-full px-6 py-3 font-semibold transition hover:scale-[1.02];
+  border: 1px solid var(--button-secondary-border);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.page-shell {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+select.input,
+select.input option {
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+html:not(.dark) .text-white {
+  color: #111111 !important;
+}
+
+html:not(.dark) .text-white\/85,
+html:not(.dark) .text-white\/80,
+html:not(.dark) .text-white\/75,
+html:not(.dark) .text-white\/70,
+html:not(.dark) .text-white\/65,
+html:not(.dark) .text-white\/60,
+html:not(.dark) .text-white\/55,
+html:not(.dark) .text-white\/50,
+html:not(.dark) .text-white\/45,
+html:not(.dark) .text-white\/40 {
+  color: rgba(17, 17, 17, 0.7) !important;
+}
+
+html:not(.dark) .bg-black\/40 {
+  background: var(--header-bg) !important;
+}
+
+html:not(.dark) .bg-white\/5 {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not(.dark) .bg-white\/10 {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .border-white\/10,
+html:not(.dark) .border-white\/15,
+html:not(.dark) .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
