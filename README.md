@@ -121,6 +121,75 @@ curl http://localhost:5000/api/health
 5. Configure App Service settings with production secrets.
 6. Set the Azure App Service Startup Command to `npm start`.
 
+## Azure App Service Deployment Steps
+
+1. Create Azure resources:
+   - Create an Azure App Service plan on Linux.
+   - Create an Azure Web App on that plan.
+   - Create Azure Cosmos DB with MongoDB API.
+   - Create an Azure Storage Account and Blob container.
+
+2. Build the frontend locally:
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+3. Install backend dependencies:
+
+```bash
+cd ../backend
+npm install
+```
+
+4. In Azure Portal, open your App Service and set these Application Settings:
+
+```env
+PORT=5000
+NODE_ENV=production
+MONGODB_URI=
+COSMOS_DB_URI=<your-cosmos-mongo-connection-string>
+JWT_SECRET=<your-secure-secret>
+AZURE_STORAGE_CONNECTION_STRING=<your-storage-connection-string>
+AZURE_CONTAINER_NAME=insurance-documents
+CLIENT_URL=https://<your-app-service-name>.azurewebsites.net
+```
+
+5. Set the Azure App Service Startup Command:
+
+```bash
+npm start
+```
+
+6. Deploy the code to App Service. If you are deploying from local Git or ZIP, make sure the repository includes:
+   - `backend/`
+   - `frontend/`
+   - built frontend assets in `frontend/dist`
+
+7. If you deploy with ZIP after building locally, package the project and deploy:
+
+```bash
+npm install
+cd backend
+npm install
+cd ../frontend
+npm install
+npm run build
+```
+
+8. After deployment, confirm the app is running:
+   - Open `https://<your-app-service-name>.azurewebsites.net`
+   - Open `https://<your-app-service-name>.azurewebsites.net/api/health`
+
+9. If the site does not start, check:
+   - App Service Log Stream
+   - Startup Command is exactly `npm start`
+   - `PORT` is set by Azure or defaults to `5000`
+   - Cosmos DB connection string is valid
+   - Blob Storage settings are configured correctly
+
 ## Cosmos DB Setup
 
 - Use the Azure portal to create a MongoDB API account.
