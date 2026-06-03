@@ -17,7 +17,9 @@ const { notFound, errorHandler } = require('./middlewares/errorHandler');
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: false
+  }));
 app.use(
   cors({
     origin: env.clientUrl,
